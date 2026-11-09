@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Okul - Öğrenci Kayıt</title>
+  <style>
+    :root {
+      --ana-renk: #1e3a8a;
+      --vurgu: #f59e0b;
+      --metin: #1f2937;
+      --cizgi: #e5e7eb;
+      --arka: #f9fafb;
+      --hata: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      margin: 0;
+      color: var(--metin);
+      background: var(--arka);
+      line-height: 1.6;
+    }
+    header {
+      background: var(--ana-renk);
+      color: #fff;
+      padding: 20px 24px;
+    }
+    header h1 { margin: 0; font-size: 1.6rem; }
+    nav {
+      margin-top: 10px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: background .2s;
+    }
+    nav a:hover { background: rgba(255,255,255,.15); }
+    .eba-link {
+      background: var(--vurgu);
+      color: #1f2937 !important;
+      font-weight: 600;
+    }
+    .eba-link:hover { background: #d97706; }
+    main { max-width: 780px; margin: 0 auto; padding: 24px; }
+    section {
+      background: #fff;
+      border: 1px solid var(--cizgi);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    h2 { margin-top: 0; color: var(--ana-renk); }
+    .alan { margin-bottom: 16px; }
+    .alan > label,
+    .alan > .grup-baslik {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--cizgi);
+      border-radius: 8px;
+      font: inherit;
+      background: #fff;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--ana-renk);
+      outline-offset: 1px;
+      border-color: var(--ana-renk);
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .secenek-grubu {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+    }
+    .secenek-grubu label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .dugme-grubu {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    button {
+      font: inherit;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .gonder { background: var(--ana-renk); color: #fff; }
+    .gonder:hover { background: #172554; }
+    .temizle { background: var(--cizgi); color: var(--metin); }
+    .temizle:hover { background: #d1d5db; }
+    .uyari { color: var(--hata); font-size: .9rem; margin-top: 4px; display: none; }
+    .uyari.aktif { display: block; }
+    .durum {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      display: none;
+    }
+    .durum.aktif { display: block; }
+    .durum.basari { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .durum.hata { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #6b7280;
+      font-size: .9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Örnek Ortaokulu</h1>
+    <nav aria-label="Ana menü">
+      <!-- EBA bağlantısı: yeni sekmede güvenli açılış -->
+      <a class="eba-link" href="https://www.eba.gov.tr" target="_blank" rel="noopener noreferrer">
+        EBA'ya Git ↗
+      </a>
+      <!-- Sayfa içi iletişim bağlantısı -->
+      <a href="#iletisim">İletişim</a>
+      <a href="#kayit">Öğrenci Kayıt</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- İLETİŞİM BÖLÜMÜ -->
+    <section id="iletisim">
+      <h2>İletişim</h2>
+      <p><strong>Adres:</strong> Örnek Mah. Okul Cad. No:1, Ankara</p>
+      <p><strong>Telefon:</strong> <a href="tel:+903121234567">(0312) 123 45 67</a></p>
+      <p><strong>E-posta:</strong> <a href="mailto:info@ornekortaokulu.edu.tr">info@ornekortaokulu.edu.tr</a></p>
+    </section>
+
+    <!-- ÖĞRENCİ KAYIT FORMU -->
+    <section id="kayit">
+      <h2>Öğrenci Kayıt Formu</h2>
+
+      <!-- action yerine JavaScript ile yakalıyoruz; gerçek bir sunucuya POST etmek isterseniz
+           action="/kayit" method="post" ekleyin ve JS'teki preventDefault'u kaldırın. -->
+      <form id="kayitFormu" novalidate>
+
+        <!-- AD -->
+        <div class="alan">
+          <label for="ad">Ad Soyad *</label>
+          <input type="text" id="ad" name="ad" autocomplete="name"
+                 required minlength="3" maxlength="80" placeholder="Adınız ve soyadınız" />
+          <div class="uyari" id="adUyari">Lütfen en az 3 karakterlik ad soyad girin.</div>
+        </div>
+
+        <!-- E-POSTA -->
+        <div class="alan">
+          <label for="email">E-posta *</label>
+          <input type="email" id="email" name="email" autocomplete="email"
+                 required placeholder="ornek@eposta.com" />
+          <div class="uyari" id="emailUyari">Geçerli bir e-posta adresi girin.</div>
+        </div>
+
+        <!-- SINIF (RADIO) -->
+        <div class="alan">
+          <span class="grup-baslik">Sınıf *</span>
+          <div class="secenek-grubu" role="radiogroup" aria-labelledby="sinifEtiket">
+            <label><input type="radio" name="sinif" value="5" required /> 5. Sınıf</label>
+            <label><input type="radio" name="sinif" value="6" /> 6. Sınıf</label>
+            <label><input type="radio" name="sinif" value="7" /> 7. Sınıf</label>
+            <label><input type="radio" name="sinif" value="8" /> 8. Sınıf</label>
+          </div>
+          <div class="uyari" id="sinifUyari">Lütfen bir sınıf seçin.</div>
+        </div>
+
+        <!-- İLGİ ALANI (CHECKBOX) -->
+        <div class="alan">
+          <span class="grup-baslik">İlgi Alanları (birden fazla seçilebilir)</span>
+          <div class="secenek-grubu">
+            <label><input type="checkbox" name="ilgi" value="matematik" /> Matematik</label>
+            <label><input type="checkbox" name="ilgi" value="fen" /> Fen Bilimleri</label>
+            <label><input type="checkbox" name="ilgi" value="turkce" /> Türkçe</label>
+            <label><input type="checkbox" name="ilgi" value="spor" /> Spor</label>
+            <label><input type="checkbox" name="ilgi" value="sanat" /> Sanat</label>
+            <label><input type="checkbox" name="ilgi" value="muzik" /> Müzik</label>
+          </div>
+        </div>
+
+        <!-- ŞEHİR (SELECT) -->
+        <div class="alan">
+          <label for="sehir">Şehir *</label>
+          <select id="sehir" name="sehir" required>
+            <option value="">— Seçiniz —</option>
+            <option value="ankara">Ankara</option>
+            <option value="istanbul">İstanbul</option>
+            <option value="izmir">İzmir</option>
+            <option value="bursa">Bursa</option>
+            <option value="antalya">Antalya</option>
+            <option value="konya">Konya</option>
+            <option value="diger">Diğer</option>
+          </select>
+          <div class="uyari" id="sehirUyari">Lütfen bir şehir seçin.</div>
+        </div>
+
+        <!-- AÇIKLAMA (TEXTAREA) -->
+        <div class="alan">
+          <label for="aciklama">Açıklama</label>
+          <textarea id="aciklama" name="aciklama" maxlength="500"
+                    placeholder="Kısaca kendinizden bahsedin (isteğe bağlı)"></textarea>
+          <div class="uyari" id="aciklamaUyari">Açıklama 500 karakteri aşamaz.</div>
+        </div>
+
+        <!-- DÜĞMELER -->
+        <div class="dugme-grubu">
+          <button type="submit" class="gonder">Gönder</button>
+          <button type="reset" class="temizle">Temizle</button>
+        </div>
+
+        <!-- DURUM MESAJI -->
+        <div class="durum" id="durum" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 Örnek Ortaokulu — Demo amaçlı hazırlanmıştır.
+  </footer>
+
+  <script>
+    (function () {
+      const form = document.getElementById('kayitFormu');
+      const durum = document.getElementById('durum');
+
+      // Yardımcı: uyarı göster/gizle
+      function uyariGoster(id, goster) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle('aktif', goster);
+      }
+
+      // Alan doğrulama
+      function dogrula() {
+        let gecerli = true;
+
+        const ad = document.getElementById('ad');
+        const adGecerli = ad.value.trim().length >= 3;
+        uyariGoster('adUyari', !adGecerli);
+        if (!adGecerli) gecerli = false;
+
+        const email = document.getElementById('email');
+        // Basit e-posta deseni (sunucu tarafı doğrulama için yeterli değildir)
+        const emailGecerli = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+        uyariGoster('emailUyari', !emailGecerli);
+        if (!emailGecerli) gecerli = false;
+
+        const sinifSecili = form.querySelector('input[name="sinif"]:checked');
+        uyariGoster('sinifUyari', !sinifSecili);
+        if (!sinifSecili) gecerli = false;
+
+        const sehir = document.getElementById('sehir');
+        const sehirGecerli = sehir.value !== '';
+        uyariGoster('sehirUyari', !sehirGecerli);
+        if (!sehirGecerli) gecerli = false;
+
+        const aciklama = document.getElementById('aciklama');
+        const aciklamaGecerli = aciklama.value.length <= 500;
+        uyariGoster('aciklamaUyari', !aciklamaGecerli);
+        if (!aciklamaGecerli) gecerli = false;
+
+        return gecerli;
+      }
+
+      // Form gönderimi
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        if (!dogrula()) {
+          durum.className = 'durum hata aktif';
+          durum.textContent = 'Lütfen kırmızı ile işaretli alanları düzeltin.';
+          // İlk hatalı alana odaklan
+          const ilkHata = form.querySelector('.uyari.aktif');
+          if (ilkHata && ilkHata.previousElementSibling) {
+            ilkHata.previousElementSibling.focus?.();
+          }
+          return;
+        }
+
+        // Form verilerini topla
+        const veri = new FormData(form);
+        const ilgiAlanlari = veri.getAll('ilgi');
+
+        // Konsola yaz (gerçek uygulamada burada fetch ile sunucuya gönderilir)
+        console.log('Gönderilen veriler:', {
+          ad: veri.get('ad'),
+          email: veri.get('email'),
+          sinif: veri.get('sinif'),
+          ilgi: ilgiAlanlari,
+          sehir: veri.get('sehir'),
+          aciklama: veri.get('aciklama')
+        });
+
+        durum.className = 'durum basari aktif';
+        durum.textContent = 'Form başarıyla dolduruldu. (Demo: veriler sunucuya gönderilmedi.)';
+      });
+
+      // Temizle: uyarıları da sıfırla
+      form.addEventListener('reset', function () {
+        ['adUyari','emailUyari','sinifUyari','sehirUyari','aciklamaUyari'].forEach(id => uyariGoster(id, false));
+        durum.className = 'durum';
+        durum.textContent = '';
+      });
+
+      // Alan bazlı anlık doğrulama (isteğe bağlı, kullanıcı deneyimini iyileştirir)
+      ['ad','email','sehir','aciklama'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', function () {
+            if (form.dataset.gonderildi === '1') dogrula();
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
